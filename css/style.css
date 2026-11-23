@@ -391,4 +391,7 @@ input.ttl{font:600 20px var(--fd)}
 @media(max-width:600px){.stack.assess td{padding:4px 0;padding-inline-start:8.5em}.stack.assess td input{height:40px}}
 .banner.flash{display:flex;align-items:center;gap:10px}.banner.flash span{flex:1}
 .bigl{font:700 13px var(--fb);letter-spacing:.04em;text-transform:uppercase;color:var(--mfg);vertical-align:middle}
+.caxis span{grid-row:1}
+.dlg input[type=number]{max-width:none}
+@media(max-width:1180px){nav.tabs a{padding:7px 10px;font-size:15px}.brand{font-size:21px}.brand svg{width:32px;height:32px}}
 @media print{.top,.bnav,#subs,.tabwrap,button,.cf{display:none!important}body{background:#fff}}

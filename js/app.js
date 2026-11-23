@@ -158,6 +158,7 @@ function vChart() {
       <span class="cval"><b>${rel.av === null ? '—' : esc(fmtAv(rel.av))}</b><small>${rel.norm === null ? '' : esc(fmtPct(rel.norm))}${rel.av !== null && !rel.complete ? ' · partial' : ''}</small></span></button>
       ${open ? vChartDetail(s, rel) : ''}</div>`;
   }).join('');
+  if (!rows.length) return `<div class="empty">Add a subject and its marks to see how you compare with the class average.</div>`;
   return `<div class="chartbar"><div class="segs" role="group" aria-label="Sort">${seg('chartSort', 'perf', 'Performance')}${seg('chartSort', 'exam', 'Next compre')}${seg('chartSort', 'name', 'Subject')}</div>
     <div class="segs" role="group" aria-label="Scale">${seg('chartMode', 'norm', 'Normalised %')}${seg('chartMode', 'raw', 'Raw Av points')}</div></div>
   <div class="chart" role="list"><div class="caxis" aria-hidden="true"><span>${modeN ? '−' + maxAbs + '%' : 'Av−' + maxAbs}</span><span>class average</span><span>${modeN ? '+' + maxAbs + '%' : 'Av+' + maxAbs}</span></div>${body}</div>
