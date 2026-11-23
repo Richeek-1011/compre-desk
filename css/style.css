@@ -434,3 +434,5 @@ tbody tr:not(:has(input,select)):hover :is(small,a){color:var(--rowhovfg)}
 .brand,.toprow .status{flex:none}
 @media(max-width:1100px) and (min-width:721px){.toprow{flex-wrap:wrap;row-gap:2px}.brand{margin-right:auto}nav.tabs-top{order:3;flex-basis:100%;margin-inline:-4px}}
 @media(max-width:1320px){nav.tabs a{padding:7px 11px}}
+.themetog::after{content:attr(data-tip) / ""}
+@media(max-width:560px){.themetog::after{display:none}}

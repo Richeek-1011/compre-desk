@@ -1,9 +1,9 @@
 // Compre Desk V2 UI. Works standalone (IndexedDB) or inside a Claude artifact (Claude database).
-import * as C from './calc.js?v=2.1.0';
-import * as SC from './schema.js?v=2.1.0';
-import { LocalStore, ClaudeStore, Saver } from './store.js?v=2.1.0';
+import * as C from './calc.js?v=2.1.1';
+import * as SC from './schema.js?v=2.1.1';
+import { LocalStore, ClaudeStore, Saver } from './store.js?v=2.1.1';
 
-const VERSION = '2.1.0';
+const VERSION = '2.1.1';
 const $ = s => document.querySelector(s);
 const main = $('#main');
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));

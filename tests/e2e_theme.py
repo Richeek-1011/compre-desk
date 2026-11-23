@@ -73,7 +73,7 @@ with sync_playwright() as p:
     check('reachable with Tab', pg.evaluate("document.activeElement.matches('.themetog')"))
     check('is a real <button> with an accessible name', pg.evaluate("document.activeElement.tagName") == 'BUTTON' and label(pg) == 'Switch to day mode')
     pg.wait_for_timeout(250)
-    check('tooltip shows on keyboard focus', pg.evaluate("(()=>{const s=getComputedStyle(document.querySelector('.themetog'),'::after');return s.content.replace(/\"/g,'')==='Switch to day mode'&&s.opacity==='1'})()"))
+    check('tooltip shows on keyboard focus', pg.evaluate("(()=>{const s=getComputedStyle(document.querySelector('.themetog'),'::after');return s.content.includes('Switch to day mode')&&s.opacity==='1'})()"))
     pg.keyboard.press('Enter'); check('Enter toggles', stored(pg) == 'light')
     pg.keyboard.press(' '); check('Space toggles', stored(pg) == 'dark')
     check('icons are hidden from screen readers', pg.eval_on_selector_all('.themetog svg', 'e=>e.every(x=>x.getAttribute("aria-hidden")==="true")'))
