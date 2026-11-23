@@ -7,7 +7,7 @@
 --bg:light-dark(#fff6df,#1c1740);--fg:light-dark(#1b1530,#fff3d6);--card:light-dark(#fff,#2a2360);--muted:light-dark(#ffeabd,#352d78);--mfg:light-dark(#5b4f66,#cdc3ee);
 --primary:light-dark(#d62839,#ff6b7a);--pfg:light-dark(#fff,#2a0610);--sec:light-dark(#b9e8d6,#2d6b5c);--secfg:light-dark(#0f3a2d,#e2fff3);
 --accent:#ffd23f;--afg:#1b1530;--ring:light-dark(#2b59d9,#7fb2ff);--ok:light-dark(#0e7a54,#4fdca5);--warn:light-dark(#ffb020,#ffc54d);--warnfg:#241800;--bad:light-dark(#a8182a,#ff8b94);--badfg:light-dark(#fff,#2e0508);
---sh:light-dark(#1b1530,#0d0a26);--sm:3px 3px 0 var(--sh);--md:5px 5px 0 var(--sh);--lg:8px 8px 0 var(--sh);
+--sh:light-dark(#1b1530,#4a3f9e);--sm:3px 3px 0 var(--sh);--md:5px 5px 0 var(--sh);--lg:8px 8px 0 var(--sh);
 --fd:"Fredoka",ui-rounded,system-ui,sans-serif;--fb:"Nunito",system-ui,sans-serif;--ease:cubic-bezier(.3,0,.2,1);--out:cubic-bezier(.34,1.56,.64,1);
 --s1:light-dark(#d62839,#ff6b7a);--sf1:light-dark(#fff,#2a0610);--s2:light-dark(#ffb020,#ffc54d);--sf2:#241800;--s3:light-dark(#1fa584,#4fdca5);--sf3:#1b1530;
 --s4:light-dark(#2b59d9,#7fb2ff);--sf4:light-dark(#fff,#1b1530);--s5:light-dark(#8a4fd6,#c39bff);--sf5:light-dark(#fff,#1b1530);--s6:#ffd23f;--sf6:#1b1530;--s7:light-dark(#b9e8d6,#2d6b5c);--sf7:light-dark(#0f3a2d,#e2fff3);
@@ -395,3 +395,42 @@ input.ttl{font:600 20px var(--fd)}
 .dlg input[type=number]{max-width:none}
 @media(max-width:1180px){nav.tabs a{padding:7px 10px;font-size:15px}.brand{font-size:21px}.brand svg{width:32px;height:32px}}
 @media print{.top,.bnav,#subs,.tabwrap,button,.cf{display:none!important}body{background:#fff}}
+/* ---------- Day / Night toggle ---------- */
+.seg[aria-pressed=true]{background:var(--fg);color:var(--bg)}
+.themetog{position:relative;flex:none;display:grid;place-items:center;width:44px;height:44px;padding:0;border:2.5px solid var(--fg);border-radius:50%;background:var(--accent);color:var(--afg);box-shadow:var(--sm);cursor:pointer}
+.themetog:hover{transform:translate(-1px,-1px);box-shadow:var(--md);background:var(--accent)}
+.themetog:active{transform:translate(3px,3px);box-shadow:0 0 0 var(--sh)}
+.themetog .ti{grid-area:1/1;width:24px;height:24px;overflow:visible}
+.themetog .moon{opacity:0;transform:rotate(-80deg) scale(.4)}
+.themetog .moon .star{color:var(--s1)}
+.themetog::after{content:attr(data-tip);position:absolute;z-index:70;top:calc(100% + 10px);right:-6px;padding:6px 11px;border-radius:10px;background:var(--fg);color:var(--bg);font:700 13px/1.2 var(--fb);white-space:nowrap;pointer-events:none;opacity:0;transform:translateY(-4px)}
+@media(hover:hover){.themetog:hover::after{opacity:1;transform:none}}
+.themetog:focus-visible::after{opacity:1;transform:none}
+:root[data-theme=dark] .themetog{background:#352d78;color:#ffd23f}
+:root[data-theme=dark] .themetog .sun{opacity:0;transform:rotate(90deg) scale(.4)}
+:root[data-theme=dark] .themetog .moon{opacity:1;transform:none}
+@media(prefers-color-scheme:dark){
+  :root:not([data-theme=light]) .themetog{background:#352d78;color:#ffd23f}
+  :root:not([data-theme=light]) .themetog .sun{opacity:0;transform:rotate(90deg) scale(.4)}
+  :root:not([data-theme=light]) .themetog .moon{opacity:1;transform:none}
+}
+@media(prefers-reduced-motion:no-preference){
+  .themetog{transition:transform 140ms var(--ease),box-shadow 140ms var(--ease),background-color 300ms var(--ease),color 300ms var(--ease)}
+  .themetog .ti{transition:transform 420ms var(--out),opacity 220ms var(--ease)}
+  .themetog::after{transition:opacity 140ms var(--ease),transform 140ms var(--ease)}
+  html.theme-switching,html.theme-switching *,html.theme-switching *::before,html.theme-switching *::after{transition-property:background-color,color,border-color,box-shadow,fill,stroke,outline-color,text-decoration-color!important;transition-duration:300ms!important;transition-timing-function:var(--ease)!important;transition-delay:0s!important}
+  html.theme-switching .themetog .ti{transition:transform 420ms var(--out),opacity 220ms var(--ease)!important}
+}
+@media(hover:none){.themetog::after{display:none}}
+/* ---------- contrast fixes, both themes ---------- */
+.tinted .lbl,.day.exam .wd{opacity:1}
+.cell.out{opacity:.68}
+.banner .linkbtn,.banner a,.savebar a{color:inherit}
+:root{--rowhov:light-dark(var(--accent),#3a3184);--rowhovfg:light-dark(var(--afg),var(--fg))}
+tbody tr:not(:has(input,select)):hover td{background:var(--rowhov);color:var(--rowhovfg)}
+tbody tr:not(:has(input,select)):hover :is(small,a){color:var(--rowhovfg)}
+.nx>div:last-child{min-width:0}.nxn{overflow-wrap:anywhere}
+@media(max-width:560px){.brand{margin-right:auto}.themetog{order:1}.toprow::after{content:"";order:2;flex-basis:100%;height:0}.toprow .status{order:3;margin-left:auto}}
+.brand,.toprow .status{flex:none}
+@media(max-width:1100px) and (min-width:721px){.toprow{flex-wrap:wrap;row-gap:2px}.brand{margin-right:auto}nav.tabs-top{order:3;flex-basis:100%;margin-inline:-4px}}
+@media(max-width:1320px){nav.tabs a{padding:7px 11px}}

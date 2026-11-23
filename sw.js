@@ -1,6 +1,6 @@
 // Network-first cache so the app opens offline. Never caches your data (that lives in IndexedDB).
-const CACHE = 'compre-desk-2.0.3';
-const CORE = ['./', './index.html', './css/style.css?v=2.0.3', './js/app.js?v=2.0.3', './js/calc.js?v=2.0.3', './js/schema.js?v=2.0.3', './js/store.js?v=2.0.3', './manifest.webmanifest', './assets/icon.svg'];
+const CACHE = 'compre-desk-2.1.0';
+const CORE = ['./', './index.html', './css/style.css?v=2.1.0', './js/app.js?v=2.1.0', './js/calc.js?v=2.1.0', './js/schema.js?v=2.1.0', './js/store.js?v=2.1.0', './js/theme.js?v=2.1.0', './manifest.webmanifest', './assets/icon.svg'];
 self.addEventListener('install', e => { e.waitUntil(caches.open(CACHE).then(c => c.addAll(CORE)).then(() => self.skipWaiting())); });
 self.addEventListener('activate', e => { e.waitUntil(caches.keys().then(ks => Promise.all(ks.filter(k => k !== CACHE).map(k => caches.delete(k)))).then(() => self.clients.claim())); });
 self.addEventListener('fetch', e => {

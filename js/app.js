@@ -1,9 +1,9 @@
 // Compre Desk V2 UI. Works standalone (IndexedDB) or inside a Claude artifact (Claude database).
-import * as C from './calc.js?v=2.0.3';
-import * as SC from './schema.js?v=2.0.3';
-import { LocalStore, ClaudeStore, Saver } from './store.js?v=2.0.3';
+import * as C from './calc.js?v=2.1.0';
+import * as SC from './schema.js?v=2.1.0';
+import { LocalStore, ClaudeStore, Saver } from './store.js?v=2.1.0';
 
-const VERSION = '2.0.3';
+const VERSION = '2.1.0';
 const $ = s => document.querySelector(s);
 const main = $('#main');
 const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -464,6 +464,12 @@ function vDeadlines() {
 }
 
 /* ---------------- backup & data ---------------- */
+function vAppearance() {
+  const pref = window.__cdTheme?.state().pref ?? null;
+  const b = (v, l) => `<button class="seg" type="button" data-theme-set="${v}" aria-pressed="${(v || null) === pref}">${l}</button>`;
+  return `<div class="card" style="margin-top:24px"><h2 class="h3">Appearance</h2><p class="sub small">Stored only in this browser, separately from your academic data and never included in backups. The sun/moon button in the header switches it too.</p>
+    <div class="segs" role="group" aria-label="Theme">${b('light', 'Day')}${b('dark', 'Night')}${b('', 'Match device')}</div></div>`;
+}
 function vData() {
   const sm = SC.summarize(S), w = prefs().prepWeights, ip = V.importPreview;
   return `<div class="wrap"><section class="sec"><h1 class="h1">Backup &amp; data</h1>
@@ -478,6 +484,7 @@ function vData() {
   <div class="grid2" style="margin-top:24px"><div class="card"><h2 class="h3">Prep weights</h2><p class="sub small">How much each category counts in estimated prep (0 ignores it).</p><div class="kv">${['modules', 'slides', 'tuts', 'pyqs'].map(k => `<div><label for="pw-${k}">${({ modules: 'Modules', slides: 'Slides', tuts: 'Tut sheets', pyqs: 'PYQs' })[k]}</label><input id="pw-${k}" type="number" min="0" max="5" step="0.5" data-bind="pw" data-k="${k}" data-type="num" value="${esc(w[k])}"></div>`).join('')}</div></div>
     <div class="card"><h2 class="h3">Quick links</h2>${(S.config.links || []).map((l, i) => `<div class="row nowrap" style="margin-bottom:8px"><input data-bind="qlink" data-i="${i}" data-k="label" value="${esc(l.label)}" aria-label="Label"><input type="url" data-bind="qlink" data-i="${i}" data-k="url" value="${esc(l.url)}" aria-label="URL"><button class="x" data-act="delQlink" data-i="${i}" aria-label="Remove link">×</button></div>`).join('')}<button class="ghost sm" data-act="addQlink">Add link</button>
     <p class="sub small">Semester label</p><input data-bind="meta" data-k="semester" value="${esc(S.meta.semester || '')}" placeholder="e.g. 2026-27 Sem 1" aria-label="Semester label"></div></div>
+  ${vAppearance()}
   ${mode === 'local' ? `<div class="card" style="margin-top:24px"><h2 class="h3">Erase this device</h2><p class="sub small">Deletes all Compre Desk data from this browser. Export first.</p><button class="ghost warn-o" data-act="wipe">Erase all data…</button></div>` : ''}
   </section></div>`;
 }

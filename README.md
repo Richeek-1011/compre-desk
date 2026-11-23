@@ -7,6 +7,7 @@ A local-first academic companion for BITS students:
 - **Daily planner.** Goals with priority and progress. Unfinished goals carry forward, and you can see where each one came from.
 - **Calendar, notes with full-text search, deadlines, quick links, project files.**
 - **Honest projections.** A relative what-if simulator and grade-boundary scenarios. All are labelled as assumptions, never guarantees.
+- **Day / Night.** The sun/moon button at the top right switches between the cream Day theme and the indigo Night theme. The first visit follows your device; after you pick one, that choice sticks (saved under its own `compre-desk:theme` key, separate from your academic data and never in backups). **Backup & data → Appearance** can set it back to *Match device*.
 
 It's a static site (HTML + CSS + vanilla JS modules), with no build step and no backend.
 
@@ -55,6 +56,7 @@ node --test tests/*.test.mjs        # calculations, migrations, save queue (no i
 pip install playwright && playwright install chromium
 python3 -m http.server 8765 &
 python3 tests/e2e.py path/to/your-backup.json
+python3 tests/e2e_theme.py path/to/your-backup.json   # Day/Night toggle (backup optional)
 ```
 
 ## How the numbers work
@@ -75,10 +77,11 @@ js/calc.js            all calculations (pure, unit-tested)
 js/schema.js          data model, migrations, backup formats
 js/store.js           IndexedDB / Claude storage + reliable save queue
 js/app.js             UI
+js/theme.js           Day / Night toggle (an inline script in index.html applies the saved theme before first paint)
 sw.js, manifest.webmanifest, assets/   offline + installable app
 tests/                unit tests (node) and browser tests (playwright)
 ```
 
 ## Releasing an update
 
-Bump the `?v=` version in `index.html`, the imports at the top of `js/app.js` and `js/schema.js`, and the `CACHE` name in `sw.js`, all to the same value. That way browsers never mix old and new files.
+Bump the `?v=` version in `index.html` (stylesheet, `theme.js` and `app.js`), the imports at the top of `js/app.js` and `js/schema.js`, the `CORE` list and `CACHE` name in `sw.js`, and `VERSION` in `js/app.js`, all to the same value. That way browsers never mix old and new files.
