@@ -78,3 +78,7 @@ js/app.js             UI
 sw.js, manifest.webmanifest, assets/   offline + installable app
 tests/                unit tests (node) and browser tests (playwright)
 ```
+
+## Releasing an update
+
+Bump the `?v=` version in `index.html`, the imports at the top of `js/app.js` and `js/schema.js`, and the `CACHE` name in `sw.js`, all to the same value. That way browsers never mix old and new files.
