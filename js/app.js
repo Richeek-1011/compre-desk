@@ -190,7 +190,7 @@ function vHome() {
   const next = exams.find(s => daysTo(s.exam.date) >= 0);
   const tg = S.planner.goals.filter(g => g.date === t); const tDone = tg.filter(g => num(g.progress) >= 100).length;
   const top = C.priorities({ subjects: subjects(), planner: S.planner, config: S.config, today: t, name: dn, weights: prefs().prepWeights })[0];
-  const cardA = `<div class="card tcard-a"><p class="lbl">Relative standing</p>${ov.norm === null ? `<p class="big">—</p><p class="sub">Add your marks and the class averages to see how far above or below average you are.</p>` : `<p class="big ${avCls(ov.norm)}">${esc(fmtPct(ov.norm))}</p><p class="sub small">Credit-weighted, normalised across ${ov.used.length} of ${ov.of} courses with class averages. Partial semester.</p>
+  const cardA = `<div class="card tcard-a"><p class="lbl">Relative standing</p>${ov.norm === null ? `<p class="big">—</p><p class="sub">Add your marks and the class averages to see how far above or below average you are.</p>` : `<p class="big ${avCls(ov.norm)}">${esc(fmtPct(ov.norm))} <span class="bigl">vs class average</span></p><p class="sub small">Credit-weighted, normalised across ${ov.used.length} of ${ov.of} courses with class averages. Partial semester.</p>
     <div class="bw">${ranked.length ? `<span>Best: <b>${esc(dn(ranked[0].s))}</b> ${esc(fmtAv(ranked[0].rel.av))}</span>` : ''}${ranked.length > 1 ? `<span>Weakest: <b>${esc(dn(ranked[ranked.length - 1].s))}</b> ${esc(fmtAv(ranked[ranked.length - 1].rel.av))}</span>` : ''}</div>`}
     <button class="sm" data-act="quickAdd">Quick add assessment</button></div>`;
   const cardB = next ? `<a class="card tcard-b" href="#s-${esc(next.id)}" style="${cvar(next.id)}"><p class="lbl">Next compre</p><div class="nx"><div class="count sm"><b>${daysTo(next.exam.date)}</b><span>${daysTo(next.exam.date) === 1 ? 'day' : 'days'}</span></div><div><p class="nxn">${esc(dn(next))}</p><p class="sub small">${esc(fmt(next.exam.date))} · ${esc(examTime(next.exam))}<br>Room ${esc(next.exam.room || 'not announced')}</p></div></div></a>` : `<div class="card tcard-b"><p class="lbl">Compres</p><p class="nxn">${exams.length ? 'All done' : 'No dates yet'}</p></div>`;
@@ -573,7 +573,7 @@ async function act(a, b) {
     case 'simReset': { withUndo(['subjects/' + s.id], 'Scenario cleared.', () => { s.sim = {}; }); break; }
     case 'quickAdd': quickAdd(b.dataset.id); break;
     case 'bulkPreview': { const bk = V.bulk[s.id] || { text: '' }; bk.rows = parseBulk(s, bk.text); V.bulk[s.id] = bk; render(); break; }
-    case 'bulkAdd': { const bk = V.bulk[s.id]; if (!bk || !bk.rows) return; const ok = bk.rows.filter(r => !r.err); ok.forEach(r => s.components.splice(compreIndex(s), 0, r.c)); touchSub(s.id); V.bulk[s.id] = { text: '', rows: null }; toast(`Added ${ok.length} assessment${ok.length === 1 ? '' : 's'}.`); render(); break; }
+    case 'bulkAdd': { const bk = V.bulk[s.id]; if (!bk || !bk.rows) return; const ok = bk.rows.filter(r => !r.err); ok.forEach(r => placeAssessment(s, r.c)); touchSub(s.id); V.bulk[s.id] = { text: '', rows: null }; toast(`Added ${ok.length} assessment${ok.length === 1 ? '' : 's'}.`); render(); break; }
     case 'exportJson': await doExport(); break;
     case 'exportCsv': await save(`compre-desk-assessments-${today()}.csv`, SC.assessmentsCsv(S, dn), 'text/csv'); break;
     case 'importCancel': V.importPreview = null; render(); break;
@@ -584,13 +584,20 @@ async function act(a, b) {
     case 'wipe': { const ok = await confirmDlg({ title: 'Erase everything on this device?', body: 'All subjects, marks, goals, notes and files saved in this browser are deleted. This can’t be undone. Export a backup first.', ok: 'Erase', danger: true }); if (!ok) return; await saver.flush(); for (const p of Object.keys(SC.toDocs(S))) await store.del(p); for (const sub of Object.values(S.subjects)) for (const f of sub.files || []) await store.delFile(f.id); S = null; render(); toast('All data erased from this browser.'); break; }
   }
 }
+const normName = n => String(n || '').toLowerCase().replace(/[^a-z0-9]/g, '');
+/** Put a new assessment into an existing empty row with the same name (e.g. the imported blank "Mid-sem"), else insert before Compre. */
+function placeAssessment(s, c) {
+  const ex = s.components.find(x => normName(x.name) === normName(c.name) && num(x.scored) === null);
+  if (ex) { ['max', 'rawMax', 'scored', 'avg'].forEach(k => { if (c[k] !== null && c[k] !== undefined) ex[k] = c[k]; }); if (!ex.name) ex.name = c.name; return ex; }
+  s.components.splice(compreIndex(s), 0, c); return c;
+}
 const compreIndex = s => { const i = s.components.findIndex(c => c.isCompre); return i < 0 ? s.components.length : i; };
 function parseBulk(s, text) {
   return String(text || '').split(/\n+/).map(l => l.trim()).filter(Boolean).map(line => {
     const p = line.split(/\t|,/).map(x => x.trim());
     const c = { id: uid('a'), name: p[0], max: num(p[1]), scored: p[2] === undefined || p[2] === '' ? null : num(p[2]), avg: p[3] === undefined || p[3] === '' ? null : num(p[3]), rawMax: p[4] === undefined || p[4] === '' ? null : num(p[4]) };
     let err = !c.name ? 'needs a name' : c.max === null ? 'needs course points' : (p[2] && c.scored === null) || (p[3] && c.avg === null) || (p[4] && c.rawMax === null) ? 'not a number' : (C.validateComponent(c)[0] || {}).msg;
-    if (!err) { const t = C.structure({ ...s, components: [...s.components, c] }); if (t.errors.length) err = 'would exceed the course total'; }
+    if (!err) { const same = s.components.find(x => normName(x.name) === normName(c.name) && num(x.scored) === null); const t = C.structure({ ...s, components: [...s.components.filter(x => x !== same), c] }); if (t.errors.length) err = 'would exceed the course total'; }
     return { line, c, err };
   });
 }
@@ -606,9 +613,11 @@ function quickAdd(preId) {
       e.preventDefault(); const g = id => d.querySelector(id).value;
       const s = S.subjects[g('#qa-s')]; V.qaSub = s.id;
       const c = { id: uid('a'), name: g('#qa-n').trim(), max: num(g('#qa-m')), rawMax: num(g('#qa-r')), scored: num(g('#qa-y')), avg: num(g('#qa-a')) };
-      const err = !c.name ? 'Give it a name.' : c.max === null ? 'Enter the course points it is worth (0 for bonus).' : (C.validateComponent(c)[0] || {}).msg || (C.structure({ ...s, components: [...s.components, c] }).errors[0]);
+      const same = s.components.find(x => normName(x.name) === normName(c.name) && num(x.scored) === null);
+      if (same && c.max === null) c.max = num(same.max);
+      const err = !c.name ? 'Give it a name.' : c.max === null ? 'Enter the course points it is worth (0 for bonus).' : (C.validateComponent(c)[0] || {}).msg || (C.structure({ ...s, components: [...s.components.filter(x => x !== same), c] }).errors[0]);
       if (err) { d.querySelector('#qa-e').textContent = err; return; }
-      s.components.splice(compreIndex(s), 0, c); touchSub(s.id); close(); toast(`Added ${c.name} to ${dn(s)}${c.scored !== null && c.avg !== null ? `: ${fmtAv(C.toPts(c, c.scored) - C.toPts(c, c.avg))}` : ''}.`); render();
+      placeAssessment(s, c); touchSub(s.id); close(); toast(`Added ${c.name} to ${dn(s)}${c.scored !== null && c.avg !== null ? `: ${fmtAv(C.toPts(c, c.scored) - C.toPts(c, c.avg))}` : ''}.`); render();
     });
   });
 }

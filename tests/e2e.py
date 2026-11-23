@@ -35,7 +35,7 @@ with sync_playwright() as p:
     # enter marks via quick add: Commsys quiz +4, midsem +23
     def quick(sub, name, mx, my, avg, raw=''):
         page.click('.tcard-a button'); page.select_option('#qa-s', sub); page.fill('#qa-n', name); page.fill('#qa-m', str(mx)); page.fill('#qa-r', str(raw)); page.fill('#qa-y', str(my)); page.fill('#qa-a', str(avg)); page.click('.dlg button[type=submit]')
-    quick('comm', 'Quiz 1', 20, 16, 12); quick('comm', 'Midsem', 90, 67, 44)
+    quick('comm', 'Quiz 1', 20, 16, 12); quick('comm', 'Mid-sem', 90, 67, 44)
     quick('iot', 'Midsem', 60, 30, 34)          # below average
     quick('opt', 'Quiz', 20, 10, 10)             # exactly average
     quick('ethics', 'Quiz', 10, 0, 5)            # zero is a real mark
@@ -54,6 +54,7 @@ with sync_playwright() as p:
     shot(page, 'home')
     # subject page + simulator does not change real marks
     page.goto(BASE + '#s-comm'); page.wait_for_selector('[role=tablist] [role=tab]')
+    check('quick add fills the existing empty Mid-sem row (no duplicate)', page.locator('table.assess tbody tr').count() == 3)
     check('subject heading uses abbreviation', page.inner_text('h1.disp').strip() == 'Commsys')
     comp_before = page.evaluate("JSON.stringify((window.__cd||{}).x||0)")
     check('simulator waits for a Compre weight (no invented rows)', page.locator('[data-bind=sim]').count() == 0)

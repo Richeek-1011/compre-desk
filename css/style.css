@@ -390,4 +390,5 @@ input.ttl{font:600 20px var(--fd)}
 @media(max-width:720px){.caxis,.chead{grid-template-columns:100px minmax(0,1fr) 74px}.cname{font-size:13px;gap:6px}.cname .dot{width:12px;height:12px}}
 @media(max-width:600px){.stack.assess td{padding:4px 0;padding-inline-start:8.5em}.stack.assess td input{height:40px}}
 .banner.flash{display:flex;align-items:center;gap:10px}.banner.flash span{flex:1}
+.bigl{font:700 13px var(--fb);letter-spacing:.04em;text-transform:uppercase;color:var(--mfg);vertical-align:middle}
 @media print{.top,.bnav,#subs,.tabwrap,button,.cf{display:none!important}body{background:#fff}}
