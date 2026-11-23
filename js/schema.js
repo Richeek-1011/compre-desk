@@ -1,5 +1,5 @@
 // Data model, migrations and backup formats. Pure functions; tested in tests/schema.test.mjs.
-import { num } from './calc.js?v=2.0.2';
+import { num } from './calc.js?v=2.0.3';
 
 export const SCHEMA = 2;
 export const DOCS = ['app/meta', 'app/config', 'app/planner', 'app/notes']; // + subjects/<id>

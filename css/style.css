@@ -323,7 +323,7 @@ tr.bad td{background:color-mix(in oklab,var(--warn) 18%,var(--card))}
 .statrow b{font:700 30px/1.1 var(--fd)}.statrow b small{font-size:16px;color:var(--mfg)}
 .statrow span{font-size:13px;color:var(--mfg);font-weight:700}
 .addgoal{margin-bottom:6px}
-.goals .goal{display:flex;flex-direction:column;gap:8px;padding:12px 14px;margin-top:14px;background:var(--card);border:2.5px solid var(--fg);border-radius:18px;box-shadow:3px 3px 0 var(--c,var(--sh))}
+.goals .goal{display:flex;flex-direction:column;align-items:stretch;gap:8px;padding:12px 14px;margin-top:14px;background:var(--card);border:2.5px solid var(--fg);border-radius:18px;box-shadow:3px 3px 0 var(--c,var(--sh))}
 .goal.done{background:color-mix(in oklab,var(--ok) 13%,var(--card))}
 .goal.done .gtext{text-decoration:line-through;color:var(--mfg)}
 .gtop{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
