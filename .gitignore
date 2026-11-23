@@ -1,0 +1,7 @@
+# Never commit personal data
+*backup*.json
+backups/
+*.csv
+node_modules/
+.DS_Store
+tests/shots/
